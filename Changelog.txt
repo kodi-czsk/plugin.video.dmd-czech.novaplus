@@ -1,3 +1,5 @@
+2017-04-29
+ * Oprava prehravani
 ﻿2016-05-20
  * Oprava prehravani
  * Oprava nahledu poradu
