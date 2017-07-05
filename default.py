@@ -85,29 +85,29 @@ def INDEX(url,page):
     if style:
     # prvni styl stranky s poradem
         items = doc.find('div', id='extra_index')
-        items = items.find('div', 'items')
-        for item in items.findAll('div', 'item'):
-                item2 = item.find('div', 'text')
-                item3 = item.find('div', 'img')
-                url = item3.a['href'].encode('utf-8')
-                title = item2.h2.a.getText(" ").encode('utf-8')
-                thumb = item3.a.img['src']
-                if re.search('voyo.nova.cz', str(url), re.U):
-                    continue
-                addDir(title,__baseurl__+url,3,thumb,1)
+        for items in items.findAll('div', 'items'):
+                for item in items.findAll('div', 'item'):
+                        item2 = item.find('div', 'text')
+                        item3 = item.find('div', 'img')
+                        url = item3.a['href'].encode('utf-8')
+                        title = item2.h2.a.getText(" ").encode('utf-8')
+                        thumb = item3.a.img['src']
+                        if re.search('voyo.nova.cz', str(url), re.U):
+                                continue
+                        addDir(title,__baseurl__+url,3,thumb,1)
  
     else:
     # druhy styl stranky s poradem
-	items = doc.find('div', 'items')
-        for item in items.findAll('div', 'item_container'):
-		url = item.a['href'].encode('utf-8')
-		if re.search('voyo.nova.cz', str(url), re.U):
-                    continue
-                item3 = item.find('div', 'img')
-                url = item3.a['href'].encode('utf-8')
-                title = item3.h3.a.getText(" ").encode('utf-8')
-                thumb = item3.a.img['src']
-		addDir(title,__baseurl__+url,3,thumb,1)  
+        for items in doc.findAll('div', 'items'):
+                for item in items.findAll('div', 'item_container'):
+                        url = item.a['href'].encode('utf-8')
+                        if re.search('voyo.nova.cz', str(url), re.U):
+                                continue
+                        item3 = item.find('div', 'img')
+                        url = item3.a['href'].encode('utf-8')
+                        title = item3.h3.a.getText(" ").encode('utf-8')
+                        thumb = item3.a.img['src']
+                        addDir(title,__baseurl__+url,3,thumb,1)  
 
 def VIDEOLINK(url,name):
     req = urllib2.Request(url)

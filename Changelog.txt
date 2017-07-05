@@ -1,6 +1,8 @@
+2017-07-05
+ * Oprava zobrazenia vsetkych dielov v poradoch a serialoch
 2017-04-29
  * Oprava prehravani
-﻿2016-05-20
+2016-05-20
  * Oprava prehravani
  * Oprava nahledu poradu
  * Zmena nazvu hlavniho adresare na Nejsledovanejsi
@@ -12,7 +14,7 @@
 2014-10-25
  * Pridani statistik
 2014-08-12
- * Oprava načítání kategorií
+ * Oprava nacitani kategorii
 2014-03-15
  * Oprava prehravani
 2014-02-04: 
