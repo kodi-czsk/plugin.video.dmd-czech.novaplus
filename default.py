@@ -143,7 +143,7 @@ def VIDEOLINK(url,name):
     #Dolovani rtmp adresy z configu
     rtmp_url = re.compile('src":"(.+?)"').findall(httpdata)
     rtmp_url = rtmp_url[0].replace("\\","")
-    addLink(name,rtmp_url,thumb[0],desc)             
+    addLink(name,rtmp_url,'http:' + thumb[0],desc)             
 
 def get_params():
         param=[]
