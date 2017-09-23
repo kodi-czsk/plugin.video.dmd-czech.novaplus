@@ -124,8 +124,16 @@ def VIDEOLINK(url,name):
     
     #Ziskani adresy configu ze stranky poradu, zacina u parametru configUrl - jen jsem slepil vsechny parametry k sobe a nacetl
     httpdata   = httpdata.replace("\r","").replace("\n","").replace("\t","")
-    parametry = re.compile('params = (.+?);').findall(httpdata)
+
+    configUrl = re.compile('configUrl: \'(.+?)\'').findall(httpdata)
+    print 'configUrl = ' + str(configUrl[0])
+
+    parametry = re.compile('configParams: {(.+?)}').findall(httpdata)
     linkgenerator = parametry[0].replace(" ","").replace("?',","?").replace("{configUrl:'","").replace(":'","=").replace("',","&").replace("'+'","").replace("'}","").replace(",","").replace(":parseInt(","")
+    print 'configParams = ' + str(linkgenerator)
+    linkgenerator = str(configUrl[0]) + str(linkgenerator)
+
+    print 'finalUrl = ' + str(linkgenerator)
     req = urllib2.Request(linkgenerator)
     req.add_header('User-Agent', _UserAgent_)
     response = urllib2.urlopen(req)
