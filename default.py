@@ -115,16 +115,17 @@ def VIDEOLINK(url,name):
     response = urllib2.urlopen(req)
     httpdata = response.read()
     response.close()
+
+    httpdata   = httpdata.replace("\r","").replace("\n","").replace("\t","")
+
     thumb = re.compile('<meta property="og:image" content="(.+?)" />').findall(httpdata)
     popis = re.compile('<meta property="og:description" content="(.+?)" />').findall(httpdata)
     try:
         desc = popis[0]
     except:
-        desc = name      
-    
-    #Ziskani adresy configu ze stranky poradu, zacina u parametru configUrl - jen jsem slepil vsechny parametry k sobe a nacetl
-    httpdata   = httpdata.replace("\r","").replace("\n","").replace("\t","")
+        desc = name
 
+    #Ziskani adresy configu ze stranky poradu, zacina u parametru configUrl - jen jsem slepil vsechny parametry k sobe a nacetl
     configUrl = re.compile('configUrl: \'(.+?)\'').findall(httpdata)
     print 'configUrl = ' + str(configUrl[0])
 
