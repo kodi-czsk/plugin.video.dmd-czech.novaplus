@@ -12,7 +12,7 @@ from stats import *
 import xbmcplugin,xbmcgui,xbmcaddon
 __baseurl__ = 'http://novaplus.nova.cz'
 __dmdbase__ = 'http://iamm.uvadi.cz/xbmc/voyo/'
-_UserAgent_ = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
+_UserAgent_ = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0'
 addon = xbmcaddon.Addon('plugin.video.dmd-czech.novaplus')
 profile = xbmc.translatePath(addon.getAddonInfo('profile'))
 __settings__ = xbmcaddon.Addon(id='plugin.video.dmd-czech.novaplus')
@@ -130,7 +130,7 @@ def VIDEOLINK(url,name):
     print 'configUrl = ' + str(configUrl[0])
 
     parametry = re.compile('configParams: {(.+?)}').findall(httpdata)
-    linkgenerator = parametry[0].replace(" ","").replace("?',","?").replace("{configUrl:'","").replace(":'","=").replace("',","&").replace("'+'","").replace("'}","").replace(",","").replace(":parseInt(","")
+    linkgenerator = parametry[0].replace(" ","").replace("?',","?").replace(":'","=").replace("',","&").replace("'","").replace(",","")
     print 'configParams = ' + str(linkgenerator)
     linkgenerator = str(configUrl[0]) + str(linkgenerator)
 
