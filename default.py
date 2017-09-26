@@ -12,7 +12,7 @@ from stats import *
 import xbmcplugin,xbmcgui,xbmcaddon
 __baseurl__ = 'http://novaplus.nova.cz'
 __dmdbase__ = 'http://iamm.uvadi.cz/xbmc/voyo/'
-_UserAgent_ = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
+_UserAgent_ = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:55.0) Gecko/20100101 Firefox/55.0'
 addon = xbmcaddon.Addon('plugin.video.dmd-czech.novaplus')
 profile = xbmc.translatePath(addon.getAddonInfo('profile'))
 __settings__ = xbmcaddon.Addon(id='plugin.video.dmd-czech.novaplus')
@@ -115,17 +115,26 @@ def VIDEOLINK(url,name):
     response = urllib2.urlopen(req)
     httpdata = response.read()
     response.close()
+
+    httpdata   = httpdata.replace("\r","").replace("\n","").replace("\t","")
+
     thumb = re.compile('<meta property="og:image" content="(.+?)" />').findall(httpdata)
     popis = re.compile('<meta property="og:description" content="(.+?)" />').findall(httpdata)
     try:
         desc = popis[0]
     except:
-        desc = name      
-    
+        desc = name
+
     #Ziskani adresy configu ze stranky poradu, zacina u parametru configUrl - jen jsem slepil vsechny parametry k sobe a nacetl
-    httpdata   = httpdata.replace("\r","").replace("\n","").replace("\t","")
-    parametry = re.compile('params = (.+?);').findall(httpdata)
-    linkgenerator = parametry[0].replace(" ","").replace("?',","?").replace("{configUrl:'","").replace(":'","=").replace("',","&").replace("'+'","").replace("'}","").replace(",","").replace(":parseInt(","")
+    configUrl = re.compile('configUrl: \'(.+?)\'').findall(httpdata)
+    print 'configUrl = ' + str(configUrl[0])
+
+    parametry = re.compile('configParams: {(.+?)}').findall(httpdata)
+    linkgenerator = parametry[0].replace(" ","").replace("?',","?").replace(":'","=").replace("',","&").replace("'","").replace(",","")
+    print 'configParams = ' + str(linkgenerator)
+    linkgenerator = str(configUrl[0]) + str(linkgenerator)
+
+    print 'finalUrl = ' + str(linkgenerator)
     req = urllib2.Request(linkgenerator)
     req.add_header('User-Agent', _UserAgent_)
     response = urllib2.urlopen(req)
@@ -135,7 +144,7 @@ def VIDEOLINK(url,name):
     #Dolovani rtmp adresy z configu
     rtmp_url = re.compile('src":"(.+?)"').findall(httpdata)
     rtmp_url = rtmp_url[0].replace("\\","")
-    addLink(name,rtmp_url,thumb[0],desc)             
+    addLink(name,rtmp_url,'http:' + thumb[0],desc)             
 
 def get_params():
         param=[]
