@@ -1,3 +1,5 @@
+2017-11-26
+ * Nová ikona
 2017-09-24
  * Oprava prehravani videi po zmene stranek Nova Plus
 2017-07-05
