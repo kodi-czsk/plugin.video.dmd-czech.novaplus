@@ -122,6 +122,21 @@ def EPISODES(url,page):
         thumb = article.a.div.img['data-original'].encode('utf-8')
         addDir(title,url,3,thumb,1)
 
+    for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
+        if section.div.h3.getText(" ").encode('utf-8') == 'Celé epizody na Nova Gold':
+            for article in section.findAll('article'):
+                url = article.a['href'].encode('utf-8')
+                title = 'Nova Gold - ' + article.a['title'].encode('utf-8')
+                thumb = article.a.div.img['data-original'].encode('utf-8')
+                addDir(title,url,3,thumb,1)
+
+        if section.div.h3.getText(" ").encode('utf-8') == 'Bonusy':
+            for article in section.findAll('article'):
+                url = article.a['href'].encode('utf-8')
+                title = 'Bonusy - ' + article.a['title'].encode('utf-8')
+                thumb = article.a.div.img['data-original'].encode('utf-8')
+                addDir(title,url,3,thumb,1)
+                
 def VIDEOLINK(url,name):
     print 'VIDEOLINK *********************************' + str(url)
 
@@ -136,35 +151,29 @@ def VIDEOLINK(url,name):
     response.close()
 
     httpdata   = httpdata.replace("\r","").replace("\n","").replace("\t","")
-
+    
     thumb = re.compile('<meta property="og:image" content="(.+?)">').findall(httpdata)
-    if (len(thumb) > 0):
-      thumb = thumb[0]
-    else:
-      thumb = ''
+    thumb = thumb[0] if len(thumb) > 0 else ''
 
     desc = re.compile('<meta name="description" content="(.+?)">').findall(httpdata)
-    if (len(desc) > 0):
-      desc = desc[0]
-    else:
-      desc = ''
+    desc = desc[0] if len(desc) > 0 else ''
 
     name = re.compile('<meta property="og:title" content="(.+?)">').findall(httpdata)
-    if (len(name) > 0):
-      name = name[0]
-    else:
-      name = '?'
+    name = name[0] if len(name) > 0 else '?'
 
     renditions = re.compile('renditions: \[(.+?)\]').findall(httpdata)
-    if (len(renditions) > 0):
-      renditions = re.compile('\'(.+?)\'').findall(renditions[0])
+    if len(renditions) > 0:
+      renditions = re.compile('[\'\:](.+?)[\'\:]').findall(renditions[0])
 
-    bitrates = re.compile('bitrates = {(.+?)\[(.+?)\]').findall(httpdata);
-    if (len(bitrates) > 0):
-      urls = re.compile('\'(.+?)\'').findall(bitrates[0][1])
+    bitrates = re.compile('bitrates = {\s*"(.*?)":(.*?)}').findall(httpdata);
+    if len(bitrates) > 0:
+      urls = re.compile('[\'\"](.+?)[\'\"]').findall(bitrates[0][1])      
 
       for num, url in enumerate(urls):
-        addLink(renditions[num],url,thumb,desc)
+        if num < len(renditions):
+          addLink(renditions[num],url,thumb,desc)
+        else:
+          addLink(name,url,thumb,desc)
     else:
       xbmcgui.Dialog().ok('Chyba', 'Video nelze přehrát', '', '')
 
