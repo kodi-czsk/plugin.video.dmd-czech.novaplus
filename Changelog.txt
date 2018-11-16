@@ -1,3 +1,5 @@
+2018-09-17
+ * Doplneni dalsich dilu (z Nova Gold) v serialech
 2018-08-14
  * Oprava doplnku po zmene stranek Nova Plus
 2017-11-26
