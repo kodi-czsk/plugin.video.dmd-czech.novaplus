@@ -101,7 +101,7 @@ def HOME_ORIGINALS(url,page):
                 title = str(title1) + ' - ' + str(title2)
                 thumb = article.a.div.img['data-original'].encode('utf-8')
                 addDir(title,url,3,thumb,1)
-                
+
 def CATEGORIES(url,page):
     print 'CATEGORIES *********************************' + str(url)
     doc = read_page(url)
@@ -136,7 +136,7 @@ def EPISODES(url,page):
                 title = 'Bonusy - ' + article.a['title'].encode('utf-8')
                 thumb = article.a.div.img['data-original'].encode('utf-8')
                 addDir(title,url,3,thumb,1)
-                
+
 def VIDEOLINK(url,name):
     print 'VIDEOLINK *********************************' + str(url)
 
@@ -151,7 +151,7 @@ def VIDEOLINK(url,name):
     response.close()
 
     httpdata   = httpdata.replace("\r","").replace("\n","").replace("\t","")
-    
+
     thumb = re.compile('<meta property="og:image" content="(.+?)">').findall(httpdata)
     thumb = thumb[0] if len(thumb) > 0 else ''
 
@@ -165,9 +165,9 @@ def VIDEOLINK(url,name):
     if len(renditions) > 0:
       renditions = re.compile('[\'\:](.+?)[\'\:]').findall(renditions[0])
 
-    bitrates = re.compile('bitrates = {\s*"(.*?)":(.*?)}').findall(httpdata);
+    bitrates = re.compile('src = {(.+?)\[(.+?)\]').findall(httpdata);
     if len(bitrates) > 0:
-      urls = re.compile('[\'\"](.+?)[\'\"]').findall(bitrates[0][1])      
+      urls = re.compile('[\'\"](.+?)[\'\"]').findall(bitrates[0][1])
 
       for num, url in enumerate(urls):
         if num < len(renditions):
