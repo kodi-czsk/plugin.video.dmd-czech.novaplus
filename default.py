@@ -116,11 +116,12 @@ def EPISODES(url,page):
     print 'EPISODES *********************************' + str(url)
     doc = read_page(url)
 
-    for article in doc.findAll('article', 'b-article b-article-text b-article-inline'):
-        url = article.a['href'].encode('utf-8')
-        title = article.a['title'].encode('utf-8')
-        thumb = article.a.div.img['data-original'].encode('utf-8')
-        addDir(title,url,3,thumb,1)
+    for section in doc.findAll('section', 'b-main-section b-main-section-padding'):
+        for article in section.findAll('article'):
+            url = article.a['href'].encode('utf-8')
+            title = article.a['title'].encode('utf-8')
+            thumb = article.a.div.img['data-original'].encode('utf-8')
+            addDir(title,url,3,thumb,1)
 
     for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
         if section.div.h3.getText(" ").encode('utf-8') == 'Celé epizody na Nova Gold':
