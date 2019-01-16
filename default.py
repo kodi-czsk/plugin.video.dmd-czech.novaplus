@@ -116,27 +116,11 @@ def EPISODES(url,page):
     print 'EPISODES *********************************' + str(url)
     doc = read_page(url)
 
-    for section in doc.findAll('section', 'b-main-section b-main-section-padding'):
-        for article in section.findAll('article'):
-            url = article.a['href'].encode('utf-8')
-            title = article.a['title'].encode('utf-8')
-            thumb = article.a.div.img['data-original'].encode('utf-8')
-            addDir(title,url,3,thumb,1)
-
-    for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
-        if section.div.h3.getText(" ").encode('utf-8') == 'Celé epizody na Nova Gold':
-            for article in section.findAll('article'):
-                url = article.a['href'].encode('utf-8')
-                title = 'Nova Gold - ' + article.a['title'].encode('utf-8')
-                thumb = article.a.div.img['data-original'].encode('utf-8')
-                addDir(title,url,3,thumb,1)
-
-        if section.div.h3.getText(" ").encode('utf-8') == 'Bonusy':
-            for article in section.findAll('article'):
-                url = article.a['href'].encode('utf-8')
-                title = 'Bonusy - ' + article.a['title'].encode('utf-8')
-                thumb = article.a.div.img['data-original'].encode('utf-8')
-                addDir(title,url,3,thumb,1)
+    for article in doc.findAll('article', 'b-article b-article-no-labels'):
+        url = article.a['href'].encode('utf-8')
+        title = article.a['title'].encode('utf-8')
+        thumb = article.a.div.img['data-original'].encode('utf-8')
+        addDir(title,url,3,thumb,1)
 
 def VIDEOLINK(url,name):
     print 'VIDEOLINK *********************************' + str(url)
@@ -144,6 +128,8 @@ def VIDEOLINK(url,name):
     doc = read_page(url)
     main = doc.find('main')
     url = main.find('iframe')['src']
+
+    print ' - iframe src ' + url
 
     req = urllib2.Request(url)
     req.add_header('User-Agent', _UserAgent_)

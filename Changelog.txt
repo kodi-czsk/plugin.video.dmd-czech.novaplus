@@ -1,3 +1,5 @@
+2019-01-16
+ * Oprava seznamu epizod poradu
 2018-11-20
  * Oprava doplnku po zmene stranek Nova Plus (seznam epizod poradu)
 2018-11-16
