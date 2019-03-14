@@ -34,9 +34,8 @@ def OBSAH():
     addDir('Seriály a pořady','http://novaplus.nova.cz/porady/',5,icon,1)
     addDir('Televizní noviny','http://novaplus.nova.cz/porad/televizni-noviny',2,icon,1)
     addDir('TOP pořady','http://novaplus.nova.cz',9,icon,1)
-    addDir('Poslední epizody','http://novaplus.nova.cz',8,icon,1)
+    addDir('Poslední díly','http://novaplus.nova.cz',8,icon,1)
     addDir('Nejsledovanější','http://novaplus.nova.cz',6,icon,1)
-    addDir('Nova Plus Originals','http://novaplus.nova.cz',10,icon,1)
     addDir('Doporučujeme','http://novaplus.nova.cz',7,icon,1)
 
 def HOME_NEJSLEDOVANEJSI(url,page):
@@ -55,7 +54,7 @@ def HOME_NEJSLEDOVANEJSI(url,page):
 def HOME_DOPORUCUJEME(url,page):
     doc = read_page(url)
 
-    for section in doc.findAll('section', 'b-main-section b-section-articles b-section-articles-primary my-5'):
+    for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
         if section.div.h3.getText(" ").encode('utf-8') == 'Doporučujeme':
             for article in section.findAll('article'):
                 url = article.a['href'].encode('utf-8')
@@ -69,7 +68,7 @@ def HOME_POSLEDNI(url,page):
     doc = read_page(url)
 
     for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
-        if section.div.h3.getText(" ").encode('utf-8') == 'Poslední epizody':
+        if section.div.h3.getText(" ").encode('utf-8') == 'Poslední díly':
             for article in section.findAll('article'):
                 url = article.a['href'].encode('utf-8')
                 title1 = article.h3.getText(" ").encode('utf-8')
@@ -88,19 +87,6 @@ def HOME_TOPPORADY(url,page):
                 title = article.a['title'].encode('utf-8')
                 thumb = article.a.div.img['data-original'].encode('utf-8')
                 addDir(title,url,2,thumb,1)
-
-def HOME_ORIGINALS(url,page):
-    doc = read_page(url)
-
-    for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
-        if section.div.h3.getText(" ").encode('utf-8') == 'Nova Plus Originals':
-            for article in section.findAll('article'):
-                url = article.a['href'].encode('utf-8')
-                title1 = article.h3.getText(" ").encode('utf-8')
-                title2 = article.find('span', 'e-text').getText(" ").encode('utf-8')
-                title = str(title1) + ' - ' + str(title2)
-                thumb = article.a.div.img['data-original'].encode('utf-8')
-                addDir(title,url,3,thumb,1)
 
 def CATEGORIES(url,page):
     print 'CATEGORIES *********************************' + str(url)
@@ -259,10 +245,6 @@ elif mode==8:
 elif mode==9:
         STATS("HOME_TOPPORADY", "Function")
         HOME_TOPPORADY(url,page)
-
-elif mode==10:
-        STATS("HOME_ORIGINALS", "Function")
-        HOME_ORIGINALS(url,page)
 
 elif mode==5:
         STATS("CATEGORIES", "Function")
