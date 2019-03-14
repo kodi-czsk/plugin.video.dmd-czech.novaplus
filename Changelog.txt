@@ -1,3 +1,5 @@
+2019-03-14
+ * Zmena na webu Nova Plus (odkaz na porad vede rovnou na nejnovejsi dil)
 2019-01-16
  * Oprava seznamu epizod poradu
 2018-11-20

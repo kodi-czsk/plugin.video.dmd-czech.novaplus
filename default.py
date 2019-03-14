@@ -112,25 +112,32 @@ def CATEGORIES(url,page):
         thumb = article.a.div.img['data-original'].encode('utf-8')
         addDir(title,url,2,thumb,1)
 
-def EPISODES(url,page):
-    print 'EPISODES *********************************' + str(url)
-    doc = read_page(url)
-
-    for article in doc.findAll('article', 'b-article b-article-no-labels'):
-        url = article.a['href'].encode('utf-8')
-        title = article.a['title'].encode('utf-8')
-        thumb = article.a.div.img['data-original'].encode('utf-8')
-        addDir(title,url,3,thumb,1)
+#def EPISODES(url,page):
+#    print 'EPISODES *********************************' + str(url)
+#    doc = read_page(url)
+#
+#    for article in doc.findAll('article', 'b-article b-article-no-labels'):
+#        url = article.a['href'].encode('utf-8')
+#        title = article.a['title'].encode('utf-8')
+#        thumb = article.a.div.img['data-original'].encode('utf-8')
+#        addDir(title,url,3,thumb,1)
 
 def VIDEOLINK(url,name):
     print 'VIDEOLINK *********************************' + str(url)
 
     doc = read_page(url)
+
+    # zjisteni nazvu a popisu aktualniho dilu
+    article = doc.find('article', 'b-article b-article-main')
+    name = article.find('h3').getText(" ").encode('utf-8')
+    desc = article.find('div', 'e-description').getText(" ").encode('utf-8')
+
+    # nalezeni iframe
     main = doc.find('main')
     url = main.find('iframe')['src']
-
     print ' - iframe src ' + url
 
+    # nacteni a zpracovani iframe
     req = urllib2.Request(url)
     req.add_header('User-Agent', _UserAgent_)
     response = urllib2.urlopen(req)
@@ -141,12 +148,10 @@ def VIDEOLINK(url,name):
 
     thumb = re.compile('<meta property="og:image" content="(.+?)">').findall(httpdata)
     thumb = thumb[0] if len(thumb) > 0 else ''
-
-    desc = re.compile('<meta name="description" content="(.+?)">').findall(httpdata)
-    desc = desc[0] if len(desc) > 0 else ''
-
-    name = re.compile('<meta property="og:title" content="(.+?)">').findall(httpdata)
-    name = name[0] if len(name) > 0 else '?'
+    #desc = re.compile('<meta name="description" content="(.+?)">').findall(httpdata)
+    #desc = desc[0] if len(desc) > 0 else ''
+    #name = re.compile('<meta property="og:title" content="(.+?)">').findall(httpdata)
+    #name = name[0] if len(name) > 0 else '?'
 
     renditions = re.compile('renditions: \[(.+?)\]').findall(httpdata)
     if len(renditions) > 0:
@@ -158,11 +163,18 @@ def VIDEOLINK(url,name):
 
       for num, url in enumerate(urls):
         if num < len(renditions):
-          addLink(renditions[num],url,thumb,desc)
+          addLink(renditions[num] + ' - ' + name,url,thumb,desc)
         else:
           addLink(name,url,thumb,desc)
     else:
       xbmcgui.Dialog().ok('Chyba', 'Video nelze přehrát', '', '')
+
+    # dalsi dily poradu
+    for article in doc.findAll('article', 'b-article b-article-no-labels'):
+        url = article.a['href'].encode('utf-8')
+        title = article.a['title'].encode('utf-8')
+        thumb = article.a.div.img['data-original'].encode('utf-8')
+        addDir(title,url,3,thumb,1)
 
 def get_params():
         param=[]
@@ -258,7 +270,8 @@ elif mode==5:
 
 elif mode==2:
         STATS("EPISODES", "Function")
-        EPISODES(url,page)
+        #EPISODES(url,page)
+        VIDEOLINK(url,page)
 
 elif mode==3:
         STATS("VIDEOLINK", "Function")
