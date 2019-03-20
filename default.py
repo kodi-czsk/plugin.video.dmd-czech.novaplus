@@ -34,9 +34,8 @@ def OBSAH():
     addDir('Seriály a pořady','http://novaplus.nova.cz/porady/',5,icon,1)
     addDir('Televizní noviny','http://novaplus.nova.cz/porad/televizni-noviny',2,icon,1)
     addDir('TOP pořady','http://novaplus.nova.cz',9,icon,1)
-    addDir('Poslední epizody','http://novaplus.nova.cz',8,icon,1)
+    addDir('Poslední díly','http://novaplus.nova.cz',8,icon,1)
     addDir('Nejsledovanější','http://novaplus.nova.cz',6,icon,1)
-    addDir('Nova Plus Originals','http://novaplus.nova.cz',10,icon,1)
     addDir('Doporučujeme','http://novaplus.nova.cz',7,icon,1)
 
 def HOME_NEJSLEDOVANEJSI(url,page):
@@ -55,7 +54,7 @@ def HOME_NEJSLEDOVANEJSI(url,page):
 def HOME_DOPORUCUJEME(url,page):
     doc = read_page(url)
 
-    for section in doc.findAll('section', 'b-main-section b-section-articles b-section-articles-primary my-5'):
+    for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
         if section.div.h3.getText(" ").encode('utf-8') == 'Doporučujeme':
             for article in section.findAll('article'):
                 url = article.a['href'].encode('utf-8')
@@ -69,7 +68,7 @@ def HOME_POSLEDNI(url,page):
     doc = read_page(url)
 
     for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
-        if section.div.h3.getText(" ").encode('utf-8') == 'Poslední epizody':
+        if section.div.h3.getText(" ").encode('utf-8') == 'Poslední díly':
             for article in section.findAll('article'):
                 url = article.a['href'].encode('utf-8')
                 title1 = article.h3.getText(" ").encode('utf-8')
@@ -89,19 +88,6 @@ def HOME_TOPPORADY(url,page):
                 thumb = article.a.div.img['data-original'].encode('utf-8')
                 addDir(title,url,2,thumb,1)
 
-def HOME_ORIGINALS(url,page):
-    doc = read_page(url)
-
-    for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
-        if section.div.h3.getText(" ").encode('utf-8') == 'Nova Plus Originals':
-            for article in section.findAll('article'):
-                url = article.a['href'].encode('utf-8')
-                title1 = article.h3.getText(" ").encode('utf-8')
-                title2 = article.find('span', 'e-text').getText(" ").encode('utf-8')
-                title = str(title1) + ' - ' + str(title2)
-                thumb = article.a.div.img['data-original'].encode('utf-8')
-                addDir(title,url,3,thumb,1)
-
 def CATEGORIES(url,page):
     print 'CATEGORIES *********************************' + str(url)
     doc = read_page(url)
@@ -112,39 +98,32 @@ def CATEGORIES(url,page):
         thumb = article.a.div.img['data-original'].encode('utf-8')
         addDir(title,url,2,thumb,1)
 
-def EPISODES(url,page):
-    print 'EPISODES *********************************' + str(url)
-    doc = read_page(url)
-
-    for section in doc.findAll('section', 'b-main-section b-main-section-padding'):
-        for article in section.findAll('article'):
-            url = article.a['href'].encode('utf-8')
-            title = article.a['title'].encode('utf-8')
-            thumb = article.a.div.img['data-original'].encode('utf-8')
-            addDir(title,url,3,thumb,1)
-
-    for section in doc.findAll('section', 'b-main-section b-section-articles my-5'):
-        if section.div.h3.getText(" ").encode('utf-8') == 'Celé epizody na Nova Gold':
-            for article in section.findAll('article'):
-                url = article.a['href'].encode('utf-8')
-                title = 'Nova Gold - ' + article.a['title'].encode('utf-8')
-                thumb = article.a.div.img['data-original'].encode('utf-8')
-                addDir(title,url,3,thumb,1)
-
-        if section.div.h3.getText(" ").encode('utf-8') == 'Bonusy':
-            for article in section.findAll('article'):
-                url = article.a['href'].encode('utf-8')
-                title = 'Bonusy - ' + article.a['title'].encode('utf-8')
-                thumb = article.a.div.img['data-original'].encode('utf-8')
-                addDir(title,url,3,thumb,1)
+#def EPISODES(url,page):
+#    print 'EPISODES *********************************' + str(url)
+#    doc = read_page(url)
+#
+#    for article in doc.findAll('article', 'b-article b-article-no-labels'):
+#        url = article.a['href'].encode('utf-8')
+#        title = article.a['title'].encode('utf-8')
+#        thumb = article.a.div.img['data-original'].encode('utf-8')
+#        addDir(title,url,3,thumb,1)
 
 def VIDEOLINK(url,name):
     print 'VIDEOLINK *********************************' + str(url)
 
     doc = read_page(url)
+
+    # zjisteni nazvu a popisu aktualniho dilu
+    article = doc.find('article', 'b-article b-article-main')
+    name = article.find('h3').getText(" ").encode('utf-8')
+    desc = article.find('div', 'e-description').getText(" ").encode('utf-8')
+
+    # nalezeni iframe
     main = doc.find('main')
     url = main.find('iframe')['src']
+    print ' - iframe src ' + url
 
+    # nacteni a zpracovani iframe
     req = urllib2.Request(url)
     req.add_header('User-Agent', _UserAgent_)
     response = urllib2.urlopen(req)
@@ -155,12 +134,10 @@ def VIDEOLINK(url,name):
 
     thumb = re.compile('<meta property="og:image" content="(.+?)">').findall(httpdata)
     thumb = thumb[0] if len(thumb) > 0 else ''
-
-    desc = re.compile('<meta name="description" content="(.+?)">').findall(httpdata)
-    desc = desc[0] if len(desc) > 0 else ''
-
-    name = re.compile('<meta property="og:title" content="(.+?)">').findall(httpdata)
-    name = name[0] if len(name) > 0 else '?'
+    #desc = re.compile('<meta name="description" content="(.+?)">').findall(httpdata)
+    #desc = desc[0] if len(desc) > 0 else ''
+    #name = re.compile('<meta property="og:title" content="(.+?)">').findall(httpdata)
+    #name = name[0] if len(name) > 0 else '?'
 
     renditions = re.compile('renditions: \[(.+?)\]').findall(httpdata)
     if len(renditions) > 0:
@@ -172,11 +149,18 @@ def VIDEOLINK(url,name):
 
       for num, url in enumerate(urls):
         if num < len(renditions):
-          addLink(renditions[num],url,thumb,desc)
+          addLink(renditions[num] + ' - ' + name,url,thumb,desc)
         else:
           addLink(name,url,thumb,desc)
     else:
       xbmcgui.Dialog().ok('Chyba', 'Video nelze přehrát', '', '')
+
+    # dalsi dily poradu
+    for article in doc.findAll('article', 'b-article b-article-no-labels'):
+        url = article.a['href'].encode('utf-8')
+        title = article.a['title'].encode('utf-8')
+        thumb = article.a.div.img['data-original'].encode('utf-8')
+        addDir(title,url,3,thumb,1)
 
 def get_params():
         param=[]
@@ -262,17 +246,14 @@ elif mode==9:
         STATS("HOME_TOPPORADY", "Function")
         HOME_TOPPORADY(url,page)
 
-elif mode==10:
-        STATS("HOME_ORIGINALS", "Function")
-        HOME_ORIGINALS(url,page)
-
 elif mode==5:
         STATS("CATEGORIES", "Function")
         CATEGORIES(url,page)
 
 elif mode==2:
         STATS("EPISODES", "Function")
-        EPISODES(url,page)
+        #EPISODES(url,page)
+        VIDEOLINK(url,page)
 
 elif mode==3:
         STATS("VIDEOLINK", "Function")
