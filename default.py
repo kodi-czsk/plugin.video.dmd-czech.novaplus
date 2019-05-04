@@ -93,20 +93,13 @@ def CATEGORIES(url,page):
     doc = read_page(url)
 
     for article in doc.findAll('article'):
-        url = article.a['href'].encode('utf-8')
-        title = article.a['title'].encode('utf-8')
-        thumb = article.a.div.img['data-original'].encode('utf-8')
-        addDir(title,url,2,thumb,1)
+        url, title, thumb = None, None, None
 
-#def EPISODES(url,page):
-#    print 'EPISODES *********************************' + str(url)
-#    doc = read_page(url)
-#
-#    for article in doc.findAll('article', 'b-article b-article-no-labels'):
-#        url = article.a['href'].encode('utf-8')
-#        title = article.a['title'].encode('utf-8')
-#        thumb = article.a.div.img['data-original'].encode('utf-8')
-#        addDir(title,url,3,thumb,1)
+        if article.a is not None:
+          url = article.a['href'].encode('utf-8')
+          title = article.a['title'].encode('utf-8')
+          thumb = article.a.div.img['data-original'].encode('utf-8')
+          addDir(title,url,2,thumb,1)
 
 def VIDEOLINK(url,name):
     print 'VIDEOLINK *********************************' + str(url)
