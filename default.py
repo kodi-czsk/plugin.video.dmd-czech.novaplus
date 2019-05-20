@@ -108,8 +108,13 @@ def VIDEOLINK(url,name):
 
     # zjisteni nazvu a popisu aktualniho dilu
     article = doc.find('article', 'b-article b-article-main')
+    # nazev
     name = article.find('h3').getText(" ").encode('utf-8')
-    desc = article.find('div', 'e-description').getText(" ").encode('utf-8')
+    # popis nemusi byt vzdy uveden
+    try:
+      desc = article.find('div', 'e-description').getText(" ").encode('utf-8')
+    except:
+      desc = ''
 
     # nalezeni iframe
     main = doc.find('main')
