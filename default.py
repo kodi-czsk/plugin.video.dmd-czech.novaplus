@@ -132,10 +132,6 @@ def VIDEOLINK(url,name):
 
     thumb = re.compile('<meta property="og:image" content="(.+?)">').findall(httpdata)
     thumb = thumb[0] if len(thumb) > 0 else ''
-    #desc = re.compile('<meta name="description" content="(.+?)">').findall(httpdata)
-    #desc = desc[0] if len(desc) > 0 else ''
-    #name = re.compile('<meta property="og:title" content="(.+?)">').findall(httpdata)
-    #name = name[0] if len(name) > 0 else '?'
 
     renditions = re.compile('renditions: \[(.+?)\]').findall(httpdata)
     if len(renditions) > 0:
@@ -147,7 +143,7 @@ def VIDEOLINK(url,name):
 
       for num, url in enumerate(urls):
         if num < len(renditions):
-          addLink(renditions[num] + ' - ' + name,url,thumb,desc)
+          addLink('[B]' + renditions[num] + ' - ' + name + '[/B]',url,thumb,desc)
         else:
           addLink(name,url,thumb,desc)
     else:
