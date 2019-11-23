@@ -1,3 +1,6 @@
+2019-11-23
+ * Oprava prehravani poradu s odkazem na specialni stranku poradu
+ * Oprava zobrazeni dalsich dilu po zmene stranek Nova Plus
 2019-05-20
  * Oprava prehravani nekterych poradu bez popisu dilu
 2019-05-01

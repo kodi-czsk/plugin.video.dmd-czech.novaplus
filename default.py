@@ -98,6 +98,7 @@ def CATEGORIES(url,page):
         if article.a is not None:
           url = article.a['href'].encode('utf-8')
           title = article.a['title'].encode('utf-8')
+          #title = article.a['title'].encode('utf-8') + ' ' + str(url)
           thumb = article.a.div.img['data-original'].encode('utf-8')
           addDir(title,url,2,thumb,1)
 
@@ -106,11 +107,30 @@ def VIDEOLINK(url,name):
 
     doc = read_page(url)
 
-    # zjisteni nazvu a popisu aktualniho dilu
+    # nalezeni hlavniho article
     article = doc.find('article', 'b-article b-article-main')
+
+    # pokud hlavni article neexistuje, jsme na specialni strance a prejdeme na odkaz "Cele dily"
+    if article is None:
+      nav = doc.find('nav', 'sub-nav')
+      if nav != None and nav.ul != None:
+        for li in nav.ul.findAll('li'):
+          if li.a != None and li.a['title'] != None and li.a['title'].encode('utf-8') == 'Celé díly':
+            url = li.a['href']
+            doc = read_page(url)
+            article = doc.find('article', 'b-article b-article-main')
+
+    # pokud stale hlavni article neexistuje, chyba
+    if article is None:
+      xbmcgui.Dialog().ok("Nova Plus TV Archiv", "Na stránce nenalezena sekce s videi. Program nebude fungovat správně.", url)
+
     # nazev
-    name = article.find('h3').getText(" ").encode('utf-8')
-    # popis nemusi byt vzdy uveden
+    try:
+      name = article.find('h3').getText(" ").encode('utf-8')
+    except:
+      name = 'Jméno pořadu nenalezeno';
+
+    # popis (nemusi byt vzdy uveden)
     try:
       desc = article.find('div', 'e-description').getText(" ").encode('utf-8')
     except:
@@ -135,7 +155,7 @@ def VIDEOLINK(url,name):
 
     renditions = re.compile('renditions: \[(.+?)\]').findall(httpdata)
     if len(renditions) > 0:
-      renditions = re.compile('[\'\:](.+?)[\'\:]').findall(renditions[0])
+      renditions = re.compile('[\"](.+?)[\"]').findall(renditions[0])
 
     bitrates = re.compile('src = {(.+?)\[(.+?)\]').findall(httpdata);
     if len(bitrates) > 0:
@@ -150,10 +170,10 @@ def VIDEOLINK(url,name):
       xbmcgui.Dialog().ok('Chyba', 'Video nelze přehrát', '', '')
 
     # dalsi dily poradu
-    for article in doc.findAll('article', 'b-article b-article-no-labels'):
+    for article in doc.findAll('article', 'b-article-news'):
         url = article.a['href'].encode('utf-8')
         title = article.a['title'].encode('utf-8')
-        thumb = article.a.div.img['data-original'].encode('utf-8')
+        thumb = article.a.img['data-original'].encode('utf-8')
         addDir(title,url,3,thumb,1)
 
 def get_params():
